@@ -1,0 +1,147 @@
+Use the /caveman skill and apply token-efficient coding practices throughout:
+reuse components, avoid redundant comments, use concise variable names,
+batch similar operations, and prefer minimal abstractions.
+
+Build a complete Next.js 14 (App Router) + Supabase restaurant website TEMPLATE
+with the following .env.local structure already in place:
+
+NEXT_PUBLIC_SUPABASE_URL=...
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY=...
+SUPABASE_SERVICE_ROLE_KEY=...
+NEXT_PUBLIC_SUPABASE_ANON_KEY=...
+CLOUDINARY_URL=...
+RESEND_API_KEY=...
+CONTACT_EMAIL=...
+PASSWORD=... (used for /admin login)
+
+---
+
+## STACK
+- Next.js 14 App Router + TypeScript
+- Supabase (DB only, no Supabase auth)
+- Cloudinary (image uploads)
+- Resend (email)
+- Tailwind CSS + shadcn/ui
+- next-intl for i18n (BG / EN toggle in navbar)
+
+---
+
+## DATABASE
+
+Create a file: `supabase/schema.sql`
+This file must contain ready-to-run SQL that the developer pastes into
+Supabase SQL Editor and executes. Include:
+- CREATE TABLE statements for all tables below
+- Enable RLS but add permissive policies so anon can read,
+  and service_role can do full CRUD
+- Add comments explaining each table
+
+Table: categories
+- id uuid PK default gen_random_uuid()
+- name_bg text not null
+- name_en text not null
+- image_url text
+- sort_order int default 0
+- created_at timestamptz default now()
+
+Table: menu_items
+- id uuid PK default gen_random_uuid()
+- category_id uuid FK → categories(id) on delete cascade
+- name_bg text not null
+- name_en text not null
+- description_bg text
+- description_en text
+- price numeric(10,2) not null
+- sort_number int default 0
+- is_featured boolean default false
+- image_url text
+- created_at timestamptz default now()
+
+---
+
+## PUBLIC SITE DESIGN
+Keep it as a TEMPLATE — use placeholder text, placeholder restaurant name,
+placeholder images (via picsum.photos or similar).
+DO NOT over-design or hardcode any brand. The template should be easy to
+customize later. Use clean, neutral styling that works for any restaurant.
+Tailwind + simple components, no heavy animation libraries.
+
+Public pages:
+/ — Hero (placeholder name + tagline) + Featured items (is_featured=true) +
+    Full menu grouped by category sorted by sort_number DESC +
+    Contact form at the bottom
+
+Language toggle (BG/EN) in navbar — use next-intl with two dictionaries.
+
+---
+
+## CONTACT FORM
+Fields: name, email, phone, message
+On submit → POST /api/contact → send email to CONTACT_EMAIL via Resend
+Show success/error state inline.
+
+---
+
+## CLOUDINARY UPLOAD
+Create POST /api/upload route:
+- Accepts multipart/form-data with a file
+- Uploads to Cloudinary using CLOUDINARY_URL from env
+- Returns { url: string }
+Used by admin panel image pickers.
+
+---
+
+## ADMIN PANEL at /admin
+Design: light minimalist with warm accents (amber/warm tones), clean sidebar,
+shadcn/ui components, good use of whitespace.
+
+Password gate:
+- Simple form at /admin/login
+- Checks input against process.env.PASSWORD
+- On success: set httpOnly cookie "admin_session=1" (via API route)
+- Middleware protects /admin/* routes, redirects to /admin/login if no cookie
+
+After login — sidebar layout with 2 pages:
+
+### /admin/categories
+- Table: image thumbnail, name_bg, name_en, sort_order, actions
+- Add / Edit (modal or inline form): image upload (→ Cloudinary), 
+  name_bg, name_en, sort_order
+- Delete with confirmation
+- Full CRUD via Supabase service_role client
+
+### /admin/menu-items
+- Table: image thumbnail, name_bg, category, price, sort_number, 
+  is_featured badge, actions
+- Filter by category (dropdown above table)
+- Add / Edit (modal or inline form):
+  image upload (→ Cloudinary),
+  name_bg, name_en,
+  description_bg, description_en,
+  price,
+  sort_number (hint: higher = shown first to customers),
+  is_featured (checkbox),
+  category (dropdown populated from categories table)
+- Delete with confirmation
+- Full CRUD via Supabase service_role client
+
+---
+
+## IMPLEMENTATION ORDER
+1. supabase/schema.sql (complete, ready to execute in Supabase SQL Editor)
+2. lib/supabase.ts (anon client + service role client)
+3. next-intl setup + BG/EN dictionaries with placeholder strings
+4. Middleware for /admin/* protection
+5. /api/upload (Cloudinary)
+6. /api/contact (Resend)
+7. /api/admin/login + logout (cookie)
+8. Public layout + Navbar (language toggle)
+9. Homepage (hero + featured + menu + contact form)
+10. /admin/login page
+11. /admin layout (sidebar)
+12. /admin/categories (full CRUD)
+13. /admin/menu-items (full CRUD)
+
+Keep components small and reusable. No unnecessary abstraction layers.
+One component per file. Prefer server components where possible,
+client components only where interactivity is needed.

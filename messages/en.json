@@ -1,0 +1,33 @@
+{
+  "nav": {
+    "menu": "Menu",
+    "contact": "Contact",
+    "home": "Home"
+  },
+  "hero": {
+    "name": "Restaurant (template)",
+    "tagline": "Great food in a welcoming atmosphere"
+  },
+  "sections": {
+    "featured": "Featured",
+    "menu": "Menu",
+    "contact": "Contact us"
+  },
+  "contact": {
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone",
+    "message": "Message",
+    "send": "Send",
+    "sending": "Sending...",
+    "success": "Message sent. Thank you!",
+    "error": "Failed to send. Please try again."
+  },
+  "menu": {
+    "price": "BGN",
+    "empty": "No items in this category."
+  },
+  "footer": {
+    "copy": "© {year} Restaurant (template). Edit copy in messages/en.json."
+  }
+}
