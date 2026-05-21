@@ -23,7 +23,7 @@ export function MenuFoodCard({
       : null;
 
   return (
-    <article className="grid grid-cols-[minmax(0,1fr)_minmax(7.25rem,auto)_5.5rem] items-center gap-3 overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-3 shadow-lg backdrop-blur-md sm:grid-cols-[minmax(0,1fr)_minmax(8rem,auto)_6rem] sm:gap-4 sm:p-4">
+    <article className="grid grid-cols-[minmax(0,1fr)_minmax(7.25rem,auto)_5.5rem] items-center gap-3 overflow-hidden rounded-2xl border border-brand/25 bg-surface-card/80 p-3 shadow-lg backdrop-blur-md sm:grid-cols-[minmax(0,1fr)_minmax(8rem,auto)_6rem] sm:gap-4 sm:p-4">
       <div className="min-w-0">
         <h3 className="font-medium text-white">{name}</h3>
         {desc ? (

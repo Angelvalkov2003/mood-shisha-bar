@@ -5,8 +5,8 @@
     "home": "Home"
   },
   "hero": {
-    "name": "Restaurant (template)",
-    "tagline": "Great food in a welcoming atmosphere"
+    "name": "Mood Shisha Bar",
+    "tagline": "Premium shisha and a great atmosphere"
   },
   "sections": {
     "featured": "Featured",
@@ -28,6 +28,6 @@
     "empty": "No items in this category."
   },
   "footer": {
-    "copy": "© {year} Restaurant (template). Edit copy in messages/en.json."
+    "copy": "© {year} Mood Shisha Bar"
   }
 }

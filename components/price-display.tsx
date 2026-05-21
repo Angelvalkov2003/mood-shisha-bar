@@ -15,8 +15,8 @@ export function PriceDisplay({
       <span
         className={
           dark
-            ? "text-sm font-semibold text-amber-200/95"
-            : "text-sm font-semibold text-amber-700"
+            ? "text-sm font-semibold text-brand"
+            : "text-sm font-semibold text-brand"
         }
       >
         {e} €

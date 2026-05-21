@@ -5,8 +5,8 @@
     "home": "Начало"
   },
   "hero": {
-    "name": "Ресторант (шаблон)",
-    "tagline": "Вкусна храна в приятна обстановка"
+    "name": "Mood Shisha Bar",
+    "tagline": "Премиум наргиле и отлична атмосфера"
   },
   "sections": {
     "featured": "Препоръчано",
@@ -28,6 +28,6 @@
     "empty": "Няма ястия в тази категория."
   },
   "footer": {
-    "copy": "© {year} Ресторант (шаблон). Променете текста в messages/bg.json."
+    "copy": "© {year} Mood Shisha Bar"
   }
 }

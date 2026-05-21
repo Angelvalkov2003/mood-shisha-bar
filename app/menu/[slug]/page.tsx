@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CategoryEnter } from "@/components/menu/category-enter";
 import { MenuFoodCard } from "@/components/menu/menu-food-card";
+import { MenuBrandHeader } from "@/components/menu/menu-brand-header";
 import { ShishaFlavorsSection } from "@/components/menu/shisha-flavors-section";
+import { SITE_NAME } from "@/lib/constants";
 import { getCategoryPage, getShishas } from "@/lib/menu-pages";
 import { t } from "@/lib/locale";
 import { imgUrl } from "@/lib/utils";
@@ -15,8 +17,9 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const data = await getCategoryPage(slug);
-  if (!data) return { title: "Menu" };
-  return { title: data.category.name_en || data.category.name_bg };
+  if (!data) return { title: `Menu | ${SITE_NAME}` };
+  const cat = data.category.name_en || data.category.name_bg;
+  return { title: `${cat} | ${SITE_NAME}` };
 }
 
 export default async function MenuCategoryPage({
@@ -42,6 +45,7 @@ export default async function MenuCategoryPage({
   return (
     <CategoryEnter>
     <main className="min-h-dvh pb-16">
+      <MenuBrandHeader />
       <div className="relative h-[min(42vh,320px)] w-full overflow-hidden">
         <Image
           src={imgUrl(category.image_url, category.id)}
@@ -51,7 +55,7 @@ export default async function MenuCategoryPage({
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-[#07070c]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/40 to-ink" />
         <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
           <Link
             href={`/menu${q}`}

@@ -6,9 +6,9 @@ export default function MenuLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="relative min-h-dvh overflow-x-hidden bg-[#07070c] text-white antialiased">
+    <div className="relative min-h-dvh overflow-x-hidden bg-ink text-white antialiased">
       <div
-        className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_90%_70%_at_50%_-10%,rgba(90,90,140,0.35),transparent_55%),radial-gradient(ellipse_60%_50%_at_80%_100%,rgba(40,60,90,0.2),transparent)]"
+        className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_90%_70%_at_50%_-10%,rgba(189,156,77,0.22),transparent_55%),radial-gradient(ellipse_60%_50%_at_80%_100%,rgba(189,156,77,0.08),transparent)]"
         aria-hidden
       />
       <div

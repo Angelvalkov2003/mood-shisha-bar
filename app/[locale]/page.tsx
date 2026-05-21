@@ -33,14 +33,14 @@ export default async function HomePage({
         <PostersSection locale={locale} posters={posters} />
         <FeaturedSection items={featured} locale={locale} />
         <FullMenu groups={byCat} locale={locale} />
-        <section id="contact" className="scroll-mt-20 py-16">
+        <section id="contact" className="scroll-mt-20 border-t border-brand/15 py-16">
           <div className="mx-auto max-w-5xl px-4 text-center">
-            <h2 className="mb-8 text-2xl font-semibold">{t("contact")}</h2>
+            <h2 className="mb-8 text-2xl font-semibold text-brand">{t("contact")}</h2>
             <ContactForm />
           </div>
         </section>
       </main>
-      <footer className="border-t border-zinc-200 py-8 text-center text-sm text-zinc-500">
+      <footer className="border-t border-brand/25 py-8 text-center text-sm text-zinc-400">
         {tf("copy", { year: new Date().getFullYear() })}
       </footer>
     </>

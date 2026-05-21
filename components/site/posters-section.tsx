@@ -13,7 +13,7 @@ export function PostersSection({
   if (!posters.length) return null;
 
   return (
-    <section className="bg-white py-10">
+    <section className="border-t border-brand/15 py-10">
       <div className="mx-auto max-w-5xl px-4">
         <div className="grid gap-4 sm:grid-cols-2">
           {posters.map((p) => {
@@ -21,7 +21,7 @@ export function PostersSection({
             const text = t(locale, p.text_bg ?? "", p.text_en ?? "");
             const link = locale === "bg" ? p.link_bg : p.link_en;
             const card = (
-              <article className="overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
+              <article className="overflow-hidden rounded-lg border border-brand/25 bg-surface-card">
                 <div className="relative aspect-[16/9]">
                   <Image
                     src={imgUrl(image, `poster-${p.id}`)}
@@ -31,7 +31,7 @@ export function PostersSection({
                     sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
-                {text ? <p className="p-3 text-sm">{text}</p> : null}
+                {text ? <p className="p-3 text-sm text-zinc-200">{text}</p> : null}
               </article>
             );
             return link ? (

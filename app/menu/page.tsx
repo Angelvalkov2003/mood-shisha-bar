@@ -1,9 +1,11 @@
 import Link from "next/link";
+import { MenuBrandHeader } from "@/components/menu/menu-brand-header";
 import { CategoryBubbles } from "@/components/menu/category-bubbles";
+import { SITE_NAME } from "@/lib/constants";
 import { getCategories } from "@/lib/menu-pages";
 
 export const metadata = {
-  title: "Menu",
+  title: `Menu | ${SITE_NAME}`,
 };
 
 export default async function MenuPage({
@@ -16,12 +18,13 @@ export default async function MenuPage({
   const categories = await getCategories();
 
   return (
-    <main className="flex min-h-dvh flex-col px-4 pb-10 pt-8 sm:pt-12">
+    <main className="flex min-h-dvh flex-col px-4 pb-10 pt-2 sm:pt-4">
+      <MenuBrandHeader />
       <header className="mb-6 text-center">
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-white/40">
+        <p className="text-xs font-medium uppercase tracking-[0.2em] text-brand/70">
           {locale === "bg" ? "Меню" : "Menu"}
         </p>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight text-brand-light sm:text-3xl">
           {locale === "bg" ? "Изберете категория" : "Choose a category"}
         </h1>
         <div className="mt-4 flex justify-center gap-2 text-sm">
@@ -29,8 +32,8 @@ export default async function MenuPage({
             href="/menu?lang=bg"
             className={
               locale === "bg"
-                ? "text-white"
-                : "text-white/40 hover:text-white/70"
+                ? "text-brand"
+                : "text-white/40 hover:text-brand"
             }
           >
             BG
@@ -40,8 +43,8 @@ export default async function MenuPage({
             href="/menu?lang=en"
             className={
               locale === "en"
-                ? "text-white"
-                : "text-white/40 hover:text-white/70"
+                ? "text-brand"
+                : "text-white/40 hover:text-brand"
             }
           >
             EN

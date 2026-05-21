@@ -18,14 +18,14 @@ export async function FullMenu({
   const tSec = await getTranslations("sections");
 
   return (
-    <section id="menu" className="scroll-mt-20 bg-white py-16">
+    <section id="menu" className="scroll-mt-20 border-t border-brand/15 bg-surface-elevated py-16">
       <div className="mx-auto max-w-3xl px-4">
-        <h2 className="mb-10 text-2xl font-semibold">{tSec("menu")}</h2>
+        <h2 className="mb-10 text-2xl font-semibold text-brand">{tSec("menu")}</h2>
         <div className="flex flex-col gap-12">
           {groups.map(({ category, items }) => (
             <div key={category.id}>
               <div className="mb-4 flex items-center gap-3">
-                <div className="relative h-12 w-12 overflow-hidden rounded-full bg-zinc-100">
+                <div className="relative h-12 w-12 overflow-hidden rounded-full border border-brand/30 bg-surface-card">
                   <Image
                     src={imgUrl(category.image_url, category.id)}
                     alt={t(locale, category.name_bg, category.name_en)}
@@ -34,7 +34,7 @@ export async function FullMenu({
                     sizes="48px"
                   />
                 </div>
-                <h3 className="text-xl font-medium">
+                <h3 className="text-xl font-medium text-brand-light">
                   {t(locale, category.name_bg, category.name_en)}
                 </h3>
               </div>
@@ -45,7 +45,7 @@ export async function FullMenu({
                   {items.map((item) => (
                     <li
                       key={item.id}
-                      className="flex items-baseline justify-between gap-4 border-b border-zinc-100 pb-4"
+                      className="flex items-baseline justify-between gap-4 border-b border-brand/15 pb-4"
                     >
                       <div>
                         <p className="font-medium">

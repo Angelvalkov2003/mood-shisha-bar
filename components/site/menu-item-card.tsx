@@ -23,8 +23,8 @@ export function MenuItemCard({
       : null;
 
   return (
-    <article className="overflow-hidden rounded-lg border border-zinc-200 bg-white">
-      <div className="relative aspect-[4/3] bg-zinc-100">
+    <article className="overflow-hidden rounded-lg border border-brand/25 bg-surface-card">
+      <div className="relative aspect-[4/3] bg-surface-elevated">
         <Image
           src={imgUrl(item.image_url, item.id)}
           alt={name}
@@ -36,12 +36,12 @@ export function MenuItemCard({
       <div className="p-4">
         <div className="flex items-start justify-between gap-2">
           <div>
-            <h3 className="font-medium">{name}</h3>
-            {portion ? <p className="text-xs text-zinc-500">{portion}</p> : null}
+            <h3 className="font-medium text-zinc-100">{name}</h3>
+            {portion ? <p className="text-xs text-zinc-400">{portion}</p> : null}
           </div>
           <PriceDisplay eur={item.price} locale={locale} />
         </div>
-        {desc ? <p className="mt-2 text-sm text-zinc-500">{desc}</p> : null}
+        {desc ? <p className="mt-2 text-sm text-zinc-400">{desc}</p> : null}
       </div>
     </article>
   );

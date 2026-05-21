@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { SITE_LOGO, SITE_NAME } from "@/lib/constants";
 import {
   LayoutGrid,
   UtensilsCrossed,
@@ -34,7 +36,16 @@ export function AdminSidebar() {
     <>
       <header className="sticky top-0 z-20 border-b border-amber-100 bg-white px-3 py-2 md:hidden">
         <div className="mb-2 flex items-center justify-between">
-          <p className="text-sm font-semibold text-amber-900">Admin</p>
+          <div className="flex items-center gap-2">
+            <Image
+              src={SITE_LOGO}
+              alt={SITE_NAME}
+              width={32}
+              height={32}
+              className="h-8 w-8 object-contain"
+            />
+            <p className="text-sm font-semibold text-amber-900">{SITE_NAME}</p>
+          </div>
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="sm" asChild>
               <Link href="/bg" target="_blank">
@@ -68,7 +79,21 @@ export function AdminSidebar() {
       </header>
 
       <aside className="hidden w-56 flex-col border-r border-amber-100 bg-white p-4 md:flex">
-        <p className="mb-6 text-lg font-semibold text-amber-900">Admin</p>
+        <div className="mb-6 flex items-center gap-2.5">
+          <Image
+            src={SITE_LOGO}
+            alt={SITE_NAME}
+            width={40}
+            height={40}
+            className="h-10 w-10 object-contain"
+          />
+          <div>
+            <p className="text-sm font-semibold leading-tight text-amber-900">
+              {SITE_NAME}
+            </p>
+            <p className="text-xs text-zinc-500">Admin</p>
+          </div>
+        </div>
         <nav className="flex flex-1 flex-col gap-1">
           {links.map(({ href, label, icon: Icon }) => (
             <Link

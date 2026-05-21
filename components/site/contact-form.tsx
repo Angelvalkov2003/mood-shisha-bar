@@ -58,7 +58,7 @@ export function ContactForm() {
         {status === "loading" ? t("sending") : t("send")}
       </Button>
       {status === "ok" && (
-        <p className="text-sm text-green-700">{t("success")}</p>
+        <p className="text-sm text-brand">{t("success")}</p>
       )}
       {status === "err" && (
         <p className="text-sm text-red-600">{t("error")}</p>

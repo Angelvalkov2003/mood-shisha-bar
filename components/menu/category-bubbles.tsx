@@ -75,7 +75,7 @@ export function CategoryBubbles({
                   type="button"
                   aria-label={name}
                   onClick={() => go(slug)}
-                  className={`${BUBBLE} rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.12),0_12px_32px_rgba(0,0,0,0.55),0_0_50px_rgba(130,150,220,0.35)] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40`}
+                  className={`${BUBBLE} rounded-full shadow-[0_0_0_1px_rgba(189,156,77,0.35),0_12px_32px_rgba(0,0,0,0.55),0_0_50px_rgba(189,156,77,0.28)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/60`}
                   initial={{ opacity: 0, scale: 0.6 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{
@@ -85,7 +85,7 @@ export function CategoryBubbles({
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <span className="relative block h-full w-full overflow-hidden rounded-full border border-white/25 bg-white/10 backdrop-blur-md">
+                  <span className="relative block h-full w-full overflow-hidden rounded-full border border-brand/40 bg-white/5 backdrop-blur-md">
                     <Image
                       src={src}
                       alt=""

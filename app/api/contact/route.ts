@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { z } from "zod";
+import { SITE_NAME } from "@/lib/constants";
 
 const schema = z.object({
   name: z.string().min(1).max(120),
@@ -19,9 +20,9 @@ export async function POST(req: Request) {
 
     const resend = new Resend(key);
     await resend.emails.send({
-      from: "Restaurant Menu <onboarding@resend.dev>",
+      from: `${SITE_NAME} <onboarding@resend.dev>`,
       to,
-      subject: `Contact: ${body.name}`,
+      subject: `${SITE_NAME} — ${body.name}`,
       text: `Name: ${body.name}\nEmail: ${body.email}\nPhone: ${body.phone ?? "-"}\n\n${body.message}`,
     });
 

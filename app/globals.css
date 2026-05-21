@@ -2,8 +2,46 @@
 
 @theme inline {
   --font-sans: var(--font-geist-sans);
+  --color-brand: #bd9c4d;
+  --color-brand-dark: #a68440;
+  --color-brand-darker: #8a6d35;
+  --color-brand-light: #f5ecd4;
+  --color-brand-muted: #bd9c4d33;
+  --color-ink: #000000;
+  --color-surface: #000000;
+  --color-surface-elevated: #0d0d0d;
+  --color-surface-card: #141414;
 }
 
 body {
+  @apply bg-ink text-zinc-100 antialiased;
+}
+
+/* Admin panel: original light + amber UI (isolated from public brand theme) */
+.admin-theme {
   @apply bg-zinc-50 text-zinc-900 antialiased;
+}
+
+.admin-theme .bg-brand {
+  @apply bg-amber-600 text-white;
+}
+
+.admin-theme .bg-brand-light {
+  @apply bg-amber-100 text-amber-900;
+}
+
+.admin-theme .hover\:bg-brand-dark:hover {
+  @apply bg-amber-700;
+}
+
+.admin-theme .focus-visible\:ring-brand:focus-visible {
+  @apply ring-amber-500;
+}
+
+.admin-theme .data-\[state\=checked\]\:bg-brand[data-state="checked"] {
+  @apply border-amber-600 bg-amber-600 text-white;
+}
+
+.admin-theme .data-\[state\=checked\]\:border-brand[data-state="checked"] {
+  @apply border-amber-600;
 }

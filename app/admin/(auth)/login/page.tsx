@@ -1,7 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { SITE_LOGO, SITE_NAME } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,8 +35,16 @@ export default function AdminLoginPage() {
 
   return (
     <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>Admin login</CardTitle>
+      <CardHeader className="items-center text-center">
+        <Image
+          src={SITE_LOGO}
+          alt={SITE_NAME}
+          width={120}
+          height={120}
+          className="mx-auto mb-2 h-20 w-auto object-contain"
+        />
+        <CardTitle>{SITE_NAME}</CardTitle>
+        <p className="text-sm text-zinc-500">Admin login</p>
       </CardHeader>
       <CardContent>
         <form onSubmit={onSubmit} className="space-y-4">
