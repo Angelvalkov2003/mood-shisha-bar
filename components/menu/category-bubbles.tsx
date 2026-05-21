@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { slugFromEn } from "@/lib/slug";
 import { t } from "@/lib/locale";
 import { imgUrl } from "@/lib/utils";
-import { useMenuGo } from "@/components/menu/menu-shell";
+import { useMenuGo } from "@/components/menu/menu-nav-context";
 import type { Category } from "@/types/db";
 
 const BUBBLE =
@@ -56,7 +56,7 @@ export function CategoryBubbles({
   let idx = 0;
 
   return (
-    <div className="mx-auto flex max-w-2xl flex-col items-center gap-y-3 px-2 sm:gap-y-4">
+    <div className="menu-bubbles-root mx-auto flex max-w-2xl flex-col items-center gap-y-3 px-2 transition-transform sm:gap-y-4">
       {layoutRows(categories).map((row, ri) => (
         <ul
           key={ri}
@@ -74,7 +74,10 @@ export function CategoryBubbles({
                 <motion.button
                   type="button"
                   aria-label={name}
-                  onClick={() => go(slug)}
+                  onClick={(e) => {
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    go({ slug, imageUrl: src, rect });
+                  }}
                   className={`${BUBBLE} rounded-full shadow-[0_0_0_1px_rgba(189,156,77,0.35),0_12px_32px_rgba(0,0,0,0.55),0_0_50px_rgba(189,156,77,0.28)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand/60`}
                   initial={{ opacity: 0, scale: 0.6 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -92,7 +95,7 @@ export function CategoryBubbles({
                       fill
                       className="object-cover brightness-110 contrast-[1.02] saturate-110"
                       sizes="(max-width: 640px) 184px, 200px"
-                      priority={i < 2}
+                      loading="lazy"
                     />
                     <span className="absolute inset-0 bg-white/5" />
                     <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/50 via-black/15 to-transparent pt-8" />

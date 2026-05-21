@@ -4,6 +4,7 @@ import { Hero } from "@/components/site/hero";
 import { FeaturedSection } from "@/components/site/featured-section";
 import { FullMenu } from "@/components/site/full-menu";
 import { ContactForm } from "@/components/site/contact-form";
+import { SocialLinks } from "@/components/site/social-links";
 import { PostersSection } from "@/components/site/posters-section";
 import { getMenuData } from "@/lib/menu-data";
 import { supabase } from "@/lib/supabase";
@@ -40,8 +41,11 @@ export default async function HomePage({
           </div>
         </section>
       </main>
-      <footer className="border-t border-brand/25 py-8 text-center text-sm text-zinc-400">
-        {tf("copy", { year: new Date().getFullYear() })}
+      <footer className="border-t border-brand/25 py-8 text-center">
+        <SocialLinks className="mb-4" />
+        <p className="text-sm text-zinc-400">
+          {tf("copy", { year: new Date().getFullYear() })}
+        </p>
       </footer>
     </>
   );

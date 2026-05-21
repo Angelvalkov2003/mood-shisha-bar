@@ -3,6 +3,7 @@
 import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname } from "@/i18n/navigation";
 import { BrandLogo } from "@/components/site/brand-logo";
+import { SocialLinks } from "@/components/site/social-links";
 import { Button } from "@/components/ui/button";
 
 export function Navbar() {
@@ -28,6 +29,9 @@ export function Navbar() {
           <a href="#contact" className="text-zinc-300 transition hover:text-brand">
             {t("contact")}
           </a>
+          <SocialLinks
+            iconClassName="h-5 w-5 text-brand transition hover:text-brand-light"
+          />
           <Button variant="outline" size="sm" asChild>
             <Link href={pathname} locale={other}>
               {other.toUpperCase()}

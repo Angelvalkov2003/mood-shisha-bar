@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { MenuBrandHeader } from "@/components/menu/menu-brand-header";
+import { MenuBrandLogo } from "@/components/menu/menu-brand-logo";
+import { MenuSocialFooter } from "@/components/menu/menu-social-footer";
 import { CategoryBubbles } from "@/components/menu/category-bubbles";
 import { SITE_NAME } from "@/lib/constants";
 import { getCategories } from "@/lib/menu-pages";
@@ -18,8 +19,8 @@ export default async function MenuPage({
   const categories = await getCategories();
 
   return (
-    <main className="flex min-h-dvh flex-col px-4 pb-10 pt-2 sm:pt-4">
-      <MenuBrandHeader />
+    <main className="flex min-h-dvh flex-col px-4 pb-2">
+      <MenuBrandLogo />
       <header className="mb-6 text-center">
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-brand/70">
           {locale === "bg" ? "Меню" : "Menu"}
@@ -52,11 +53,14 @@ export default async function MenuPage({
         </div>
       </header>
 
-      {categories.length === 0 ? (
-        <p className="text-center text-white/50">No categories yet.</p>
-      ) : (
-        <CategoryBubbles categories={categories} locale={locale} />
-      )}
+      <div className="flex flex-1 flex-col justify-center">
+        {categories.length === 0 ? (
+          <p className="text-center text-white/50">No categories yet.</p>
+        ) : (
+          <CategoryBubbles categories={categories} locale={locale} />
+        )}
+      </div>
+      <MenuSocialFooter />
     </main>
   );
 }

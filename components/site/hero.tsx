@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import { SocialLinks } from "@/components/site/social-links";
 import { SITE_LOGO, SITE_NAME } from "@/lib/constants";
 
 export async function Hero() {
@@ -14,12 +15,14 @@ export async function Hero() {
           width={280}
           height={280}
           priority
-          className="mx-auto h-28 w-auto max-w-[min(70vw,240px)] object-contain sm:h-32"
+          className="mx-auto max-h-28 w-auto max-w-[min(70vw,240px)] object-contain sm:max-h-32"
+          style={{ width: "auto", height: "auto" }}
         />
         <h1 className="mt-6 text-4xl font-bold tracking-tight text-brand sm:text-5xl">
           {t("name")}
         </h1>
         <p className="mt-4 text-lg text-zinc-300">{t("tagline")}</p>
+        <SocialLinks className="mt-6" />
       </div>
     </section>
   );

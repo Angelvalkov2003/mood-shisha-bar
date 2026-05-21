@@ -45,3 +45,122 @@ body {
 .admin-theme .data-\[state\=checked\]\:border-brand[data-state="checked"] {
   @apply border-amber-600;
 }
+
+/* Menu: back slide — category exits right, /menu enters from left */
+.menu-pages {
+  position: relative;
+  min-height: 100dvh;
+  overflow: hidden;
+}
+
+html.menu-slide-active,
+html.menu-slide-active body {
+  overflow: hidden;
+}
+
+.menu-page {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  backface-visibility: hidden;
+  transition:
+    transform 400ms cubic-bezier(0.4, 0.1, 0.7, 0.95),
+    opacity 280ms ease;
+  will-change: transform, opacity;
+}
+
+/* Back slide: transform only — avoids opacity flash between panels */
+html.menu-slide-active .menu-page {
+  transition: transform 400ms cubic-bezier(0.4, 0.1, 0.7, 0.95);
+  will-change: transform;
+}
+
+html.menu-slide-active .menu-page--left,
+html.menu-slide-active .menu-page--right,
+html.menu-slide-active .menu-page--active {
+  opacity: 1;
+}
+
+.menu-back-curtain {
+  min-height: 100dvh;
+  width: 100%;
+  background: #000;
+}
+
+.menu-page--out {
+  z-index: 2;
+}
+
+.menu-page--in {
+  z-index: 1;
+}
+
+.menu-page--active {
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+.menu-page--left {
+  transform: translate3d(-100%, 0, 0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.menu-page--right {
+  transform: translate3d(100%, 0, 0);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Tile expand: /menu → category (from bubble rect to fullscreen) */
+.menu-expand {
+  visibility: hidden;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.menu-expand--visible {
+  visibility: visible;
+}
+
+.menu-expand__container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100dvh;
+  transform-origin: top left;
+  overflow: hidden;
+  background: #000;
+  transform: translate(var(--menu-tx, 0), var(--menu-ty, 0))
+    scale(var(--menu-sx, 1), var(--menu-sy, 1));
+  transition: transform 0.3s ease-in-out;
+  will-change: transform;
+}
+
+.menu-expand__container--open {
+  transform: translate(0, 0) scale(1, 1);
+}
+
+.menu-expand__inner {
+  display: flex;
+  min-height: 100dvh;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  background: #000;
+}
+
+html.menu-expand-active .menu-bubbles-root {
+  transform: scale(0.8);
+  transition: transform 0.3s ease-in-out;
+}
+
+html.menu-expand-active .menu-page {
+  visibility: hidden;
+}
