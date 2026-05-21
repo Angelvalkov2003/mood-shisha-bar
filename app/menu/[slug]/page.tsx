@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CategoryEnter } from "@/components/menu/category-enter";
 import { MenuFoodCard } from "@/components/menu/menu-food-card";
-import { getCategoryPage } from "@/lib/menu-pages";
+import { ShishaFlavorsSection } from "@/components/menu/shisha-flavors-section";
+import { getCategoryPage, getShishas } from "@/lib/menu-pages";
 import { t } from "@/lib/locale";
 import { imgUrl } from "@/lib/utils";
 
@@ -28,7 +29,10 @@ export default async function MenuCategoryPage({
   const { slug } = await params;
   const { lang } = await searchParams;
   const locale = lang === "en" ? "en" : "bg";
-  const data = await getCategoryPage(slug);
+  const [data, shishas] = await Promise.all([
+    getCategoryPage(slug),
+    slug === "nargile" ? getShishas() : Promise.resolve([]),
+  ]);
   if (!data) notFound();
 
   const { category, items } = data;
@@ -75,6 +79,9 @@ export default async function MenuCategoryPage({
             ))}
           </ul>
         )}
+        {slug === "nargile" ? (
+          <ShishaFlavorsSection shishas={shishas} locale={locale} />
+        ) : null}
       </section>
     </main>
     </CategoryEnter>

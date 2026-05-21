@@ -12,6 +12,8 @@ function revalidate() {
   revalidatePath("/admin/categories");
   revalidatePath("/admin/menu-items");
   revalidatePath("/admin/posters");
+  revalidatePath("/admin/shishas");
+  revalidatePath("/menu/nargile");
 }
 
 export async function saveCategory(data: {
@@ -141,6 +143,44 @@ export async function savePoster(data: {
 export async function deletePoster(id: string) {
   await assertAdmin();
   const { error } = await supabaseAdmin().from("posters").delete().eq("id", id);
+  if (error) throw error;
+  revalidate();
+}
+
+export async function saveShisha(data: {
+  id?: string;
+  brand: string;
+  image_url: string | null;
+  all_flavors: string[];
+  available_flavors: string[];
+  sort_order: number;
+}) {
+  await assertAdmin();
+  const all = [...new Set(data.all_flavors.map((f) => f.trim()).filter(Boolean))];
+  const available = data.available_flavors
+    .map((f) => f.trim())
+    .filter((f) => f && all.includes(f));
+  const row = {
+    brand: data.brand.trim(),
+    image_url: data.image_url,
+    all_flavors: all,
+    available_flavors: available,
+    sort_order: data.sort_order,
+  };
+  const db = supabaseAdmin();
+  if (data.id) {
+    const { error } = await db.from("shishas").update(row).eq("id", data.id);
+    if (error) throw error;
+  } else {
+    const { error } = await db.from("shishas").insert(row);
+    if (error) throw error;
+  }
+  revalidate();
+}
+
+export async function deleteShisha(id: string) {
+  await assertAdmin();
+  const { error } = await supabaseAdmin().from("shishas").delete().eq("id", id);
   if (error) throw error;
   revalidate();
 }

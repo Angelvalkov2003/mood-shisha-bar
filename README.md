@@ -16,6 +16,7 @@ Next.js App Router + Supabase + Cloudinary + Resend + next-intl (BG/EN).
 | `/admin/login` | Password gate (`PASSWORD` env) |
 | `/admin/categories` | Category CRUD |
 | `/admin/menu-items` | Menu item CRUD |
+| `/admin/shishas` | Shisha brands + flavors CRUD |
 
 ## Env
 

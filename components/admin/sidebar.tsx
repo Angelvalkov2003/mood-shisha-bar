@@ -8,6 +8,7 @@ import {
   LogOut,
   ExternalLink,
   Image as ImageIcon,
+  Flame,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { Button } from "@/components/ui/button";
 const links = [
   { href: "/admin/menu-items", label: "Menu items", icon: UtensilsCrossed },
   { href: "/admin/categories", label: "Categories", icon: LayoutGrid },
+  { href: "/admin/shishas", label: "Shishas", icon: Flame },
   { href: "/admin/posters", label: "Posters", icon: ImageIcon },
 ];
 

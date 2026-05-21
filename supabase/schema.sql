@@ -57,6 +57,22 @@ CREATE TABLE IF NOT EXISTS posters (
 COMMENT ON TABLE posters IS 'Homepage posters with per-locale image, text and link.';
 COMMENT ON COLUMN posters.sort_order IS 'Higher values are shown first.';
 
+-- Shisha brands (tobacco brands + flavor catalog)
+CREATE TABLE IF NOT EXISTS shishas (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  brand text NOT NULL,
+  image_url text,
+  all_flavors text[] NOT NULL DEFAULT '{}',
+  available_flavors text[] NOT NULL DEFAULT '{}',
+  sort_order int NOT NULL DEFAULT 0,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+COMMENT ON TABLE shishas IS 'Shisha tobacco brands; available_flavors is a subset of all_flavors shown on the site.';
+COMMENT ON COLUMN shishas.brand IS 'Brand name (e.g. Al Fakher)';
+COMMENT ON COLUMN shishas.all_flavors IS 'Full flavor catalog for this brand';
+COMMENT ON COLUMN shishas.available_flavors IS 'Checked flavors visible to customers';
+
 -- Safe migration for existing projects that already created menu_items
 ALTER TABLE menu_items
   ADD COLUMN IF NOT EXISTS portion_value text;
@@ -91,6 +107,7 @@ CREATE INDEX IF NOT EXISTS menu_items_featured_idx ON menu_items(is_featured) WH
 ALTER TABLE categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE menu_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE posters ENABLE ROW LEVEL SECURITY;
+ALTER TABLE shishas ENABLE ROW LEVEL SECURITY;
 
 -- Public read (anon key on site)
 CREATE POLICY "anon_read_categories"
@@ -108,11 +125,18 @@ CREATE POLICY "anon_read_posters"
   TO anon
   USING (true);
 
+CREATE POLICY "anon_read_shishas"
+  ON shishas FOR SELECT
+  TO anon
+  USING (true);
+
 -- service_role bypasses RLS; server admin uses SUPABASE_SERVICE_ROLE_KEY for CRUD
 
 GRANT SELECT ON categories TO anon;
 GRANT SELECT ON menu_items TO anon;
 GRANT SELECT ON posters TO anon;
+GRANT SELECT ON shishas TO anon;
 GRANT ALL ON categories TO service_role;
 GRANT ALL ON menu_items TO service_role;
 GRANT ALL ON posters TO service_role;
+GRANT ALL ON shishas TO service_role;

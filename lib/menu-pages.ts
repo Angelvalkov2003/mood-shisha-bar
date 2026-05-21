@@ -1,5 +1,5 @@
 import { supabase } from "@/lib/supabase";
-import type { Category, MenuItem } from "@/types/db";
+import type { Category, MenuItem, Shisha } from "@/types/db";
 
 export async function getCategories() {
   const { data } = await supabase
@@ -28,4 +28,12 @@ export async function getCategoryPage(slug: string) {
   );
 
   return { category: category as Category, items };
+}
+
+export async function getShishas() {
+  const { data } = await supabase
+    .from("shishas")
+    .select("*")
+    .order("sort_order", { ascending: false });
+  return (data ?? []) as Shisha[];
 }

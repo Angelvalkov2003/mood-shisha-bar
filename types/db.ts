@@ -37,3 +37,13 @@ export type Poster = {
   sort_order: number;
   created_at: string;
 };
+
+export type Shisha = {
+  id: string;
+  brand: string;
+  image_url: string | null;
+  all_flavors: string[];
+  available_flavors: string[];
+  sort_order: number;
+  created_at: string;
+};
