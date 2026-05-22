@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { PriceDisplay } from "@/components/price-display";
 import { t } from "@/lib/locale";
-import { imgUrl } from "@/lib/utils";
+import { cn, imageSrc } from "@/lib/utils";
 import type { MenuItem } from "@/types/db";
 
 export function MenuFoodCard({
@@ -21,9 +21,17 @@ export function MenuFoodCard({
     item.portion_value && item.portion_unit
       ? `${item.portion_value} ${item.portion_unit}`
       : null;
+  const src = imageSrc(item.image_url);
 
   return (
-    <article className="grid grid-cols-[minmax(0,1fr)_minmax(7.25rem,auto)_5.5rem] items-center gap-3 overflow-hidden rounded-2xl border border-brand/25 bg-surface-card/80 p-3 shadow-lg backdrop-blur-md sm:grid-cols-[minmax(0,1fr)_minmax(8rem,auto)_6rem] sm:gap-4 sm:p-4">
+    <article
+      className={cn(
+        "grid items-center gap-3 overflow-hidden rounded-2xl border border-brand/25 bg-surface-card/80 p-3 shadow-lg backdrop-blur-md sm:gap-4 sm:p-4",
+        src
+          ? "grid-cols-[minmax(0,1fr)_minmax(7.25rem,auto)_5.5rem] sm:grid-cols-[minmax(0,1fr)_minmax(8rem,auto)_6rem]"
+          : "grid-cols-[minmax(0,1fr)_minmax(7.25rem,auto)] sm:grid-cols-[minmax(0,1fr)_minmax(8rem,auto)]",
+      )}
+    >
       <div className="min-w-0">
         <h3 className="font-medium text-white">{name}</h3>
         {desc ? (
@@ -38,15 +46,17 @@ export function MenuFoodCard({
         ) : null}
       </div>
 
-      <div className="relative h-[5.5rem] w-full max-w-[5.5rem] shrink-0 justify-self-end overflow-hidden rounded-xl bg-white/5 sm:h-24 sm:max-w-24">
-        <Image
-          src={imgUrl(item.image_url, item.id)}
-          alt={name}
-          fill
-          className="object-cover"
-          sizes="96px"
-        />
-      </div>
+      {src ? (
+        <div className="relative h-[5.5rem] w-full max-w-[5.5rem] shrink-0 justify-self-end overflow-hidden rounded-xl bg-white/5 sm:h-24 sm:max-w-24">
+          <Image
+            src={src}
+            alt={name}
+            fill
+            className="object-cover"
+            sizes="96px"
+          />
+        </div>
+      ) : null}
     </article>
   );
 }

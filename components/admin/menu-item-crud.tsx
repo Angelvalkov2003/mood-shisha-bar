@@ -5,7 +5,12 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Pencil, Plus, Trash2 } from "lucide-react";
-import { deleteMenuItem, setMenuItemAvailability } from "@/app/admin/actions";
+import {
+  deleteMenuItem,
+  setMenuItemAvailability,
+  setMenuItemSortNumber,
+} from "@/app/admin/actions";
+import { InlineSortInput } from "@/components/admin/inline-sort-input";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -24,7 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { cn, imgUrl } from "@/lib/utils";
+import { cn, imageSrc } from "@/lib/utils";
 import type { Category, MenuItem } from "@/types/db";
 
 export function MenuItemCrud({
@@ -55,6 +60,21 @@ export function MenuItemCrud({
     await deleteMenuItem(id);
     setDelId(null);
     router.refresh();
+  }
+
+  async function updateSort(row: MenuItem, sort_number: number) {
+    setItems((prev) =>
+      prev.map((r) => (r.id === row.id ? { ...r, sort_number } : r)),
+    );
+    try {
+      await setMenuItemSortNumber(row.id, sort_number);
+      router.refresh();
+    } catch {
+      setItems((prev) =>
+        prev.map((r) => (r.id === row.id ? { ...r, sort_number: row.sort_number } : r)),
+      );
+      setToggleErr("Could not update sort number");
+    }
   }
 
   async function toggleAvailable(row: MenuItem) {
@@ -130,15 +150,19 @@ export function MenuItemCrud({
                 />
               </TableCell>
               <TableCell>
-                <div className="relative h-10 w-10 overflow-hidden rounded">
-                  <Image
-                    src={imgUrl(r.image_url, r.id)}
-                    alt=""
-                    fill
-                    className="object-cover"
-                    sizes="40px"
-                  />
-                </div>
+                {imageSrc(r.image_url) ? (
+                  <div className="relative h-10 w-10 overflow-hidden rounded">
+                    <Image
+                      src={imageSrc(r.image_url)!}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      sizes="40px"
+                    />
+                  </div>
+                ) : (
+                  <span className="text-xs text-zinc-400">—</span>
+                )}
               </TableCell>
               <TableCell>
                 <div className="flex flex-wrap items-center gap-2">
@@ -158,7 +182,12 @@ export function MenuItemCrud({
               </TableCell>
               <TableCell>{catName(r.category_id)}</TableCell>
               <TableCell>{Number(r.price).toFixed(2)}</TableCell>
-              <TableCell>{r.sort_number}</TableCell>
+              <TableCell>
+                <InlineSortInput
+                  value={r.sort_number}
+                  onSave={(sort_number) => updateSort(r, sort_number)}
+                />
+              </TableCell>
               <TableCell className="text-right">
                 <div className="relative inline-flex items-center gap-1">
                   <Button variant="ghost" size="icon" asChild>

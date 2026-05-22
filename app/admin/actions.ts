@@ -68,14 +68,16 @@ export async function saveMenuItem(data: {
 }) {
   await assertAdmin();
   const db = supabaseAdmin();
+  const portion_value = data.portion_value?.trim() || null;
+  const portion_unit = portion_value ? data.portion_unit : null;
   const row = {
     category_id: data.category_id,
     name_bg: data.name_bg,
     name_en: data.name_en,
     description_bg: data.description_bg,
     description_en: data.description_en,
-    portion_value: data.portion_value,
-    portion_unit: data.portion_unit,
+    portion_value,
+    portion_unit,
     price: data.price,
     sort_number: data.sort_number,
     is_featured: data.is_featured,
@@ -104,6 +106,46 @@ export async function setMenuItemAvailability(id: string, is_available: boolean)
   const { error } = await supabaseAdmin()
     .from("menu_items")
     .update({ is_available })
+    .eq("id", id);
+  if (error) throw error;
+  revalidate();
+}
+
+export async function setMenuItemSortNumber(id: string, sort_number: number) {
+  await assertAdmin();
+  const { error } = await supabaseAdmin()
+    .from("menu_items")
+    .update({ sort_number })
+    .eq("id", id);
+  if (error) throw error;
+  revalidate();
+}
+
+export async function setCategorySortOrder(id: string, sort_order: number) {
+  await assertAdmin();
+  const { error } = await supabaseAdmin()
+    .from("categories")
+    .update({ sort_order })
+    .eq("id", id);
+  if (error) throw error;
+  revalidate();
+}
+
+export async function setShishaSortOrder(id: string, sort_order: number) {
+  await assertAdmin();
+  const { error } = await supabaseAdmin()
+    .from("shishas")
+    .update({ sort_order })
+    .eq("id", id);
+  if (error) throw error;
+  revalidate();
+}
+
+export async function setPosterSortOrder(id: string, sort_order: number) {
+  await assertAdmin();
+  const { error } = await supabaseAdmin()
+    .from("posters")
+    .update({ sort_order })
     .eq("id", id);
   if (error) throw error;
   revalidate();

@@ -28,7 +28,7 @@ type Form = {
   description_bg: string;
   description_en: string;
   portion_value: string;
-  portion_unit: "g" | "ml";
+  portion_unit: "g" | "ml" | null;
   price: number;
   sort_number: number;
   is_featured: boolean;
@@ -54,7 +54,12 @@ export function MenuItemForm({
     description_bg: initial?.description_bg ?? "",
     description_en: initial?.description_en ?? "",
     portion_value: initial?.portion_value ?? "",
-    portion_unit: initial?.portion_unit === "ml" ? "ml" : "g",
+    portion_unit:
+      initial?.portion_unit === "ml"
+        ? "ml"
+        : initial?.portion_unit === "g"
+          ? "g"
+          : null,
     price: initial ? Number(initial.price) : 0,
     sort_number: initial?.sort_number ?? 0,
     is_featured: initial?.is_featured ?? false,
@@ -67,12 +72,13 @@ export function MenuItemForm({
     setErr("");
     setBusy(true);
     try {
+      const portionValue = form.portion_value.trim();
       await saveMenuItem({
         ...form,
         description_bg: form.description_bg || null,
         description_en: form.description_en || null,
-        portion_value: form.portion_value.trim() || null,
-        portion_unit: form.portion_value.trim() ? form.portion_unit : null,
+        portion_value: portionValue || null,
+        portion_unit: portionValue ? form.portion_unit ?? "g" : null,
       });
       router.push("/admin/menu-items");
       router.refresh();
@@ -159,13 +165,25 @@ export function MenuItemForm({
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
-            <Label>Portion</Label>
+            <Label>Portion (optional)</Label>
             <Input
               value={form.portion_value}
-              onChange={(e) => setForm({ ...form, portion_value: e.target.value })}
+              onChange={(e) => {
+                const portion_value = e.target.value;
+                setForm((prev) => ({
+                  ...prev,
+                  portion_value,
+                  portion_unit: portion_value.trim()
+                    ? (prev.portion_unit ?? "g")
+                    : null,
+                }));
+              }}
               placeholder="e.g. 250"
               className="mt-1"
             />
+            <p className="mt-1 text-xs text-zinc-500">
+              Leave empty for items without weight or volume.
+            </p>
           </div>
           <div>
             <Label>Unit</Label>
@@ -174,6 +192,7 @@ export function MenuItemForm({
                 type="button"
                 size="sm"
                 variant={form.portion_unit === "g" ? "default" : "ghost"}
+                disabled={!form.portion_value.trim()}
                 onClick={() => setForm({ ...form, portion_unit: "g" })}
               >
                 Grams (g)
@@ -182,6 +201,7 @@ export function MenuItemForm({
                 type="button"
                 size="sm"
                 variant={form.portion_unit === "ml" ? "default" : "ghost"}
+                disabled={!form.portion_value.trim()}
                 onClick={() => setForm({ ...form, portion_unit: "ml" })}
               >
                 Milliliters (ml)

@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS menu_items (
 COMMENT ON TABLE menu_items IS 'Dishes; sort_number DESC = shown first on public menu.';
 COMMENT ON COLUMN menu_items.is_featured IS 'Shown in homepage featured section when true';
 COMMENT ON COLUMN menu_items.is_available IS 'When false, hidden from public menu but visible in admin';
-COMMENT ON COLUMN menu_items.portion_value IS 'Portion amount as free text, e.g. 250';
-COMMENT ON COLUMN menu_items.portion_unit IS 'Portion unit: g or ml';
+COMMENT ON COLUMN menu_items.portion_value IS 'Optional portion amount, e.g. 250; NULL = not shown on menu';
+COMMENT ON COLUMN menu_items.portion_unit IS 'Optional unit g or ml; must be NULL when portion_value is NULL';
 
 -- Posters (homepage promo banners)
 CREATE TABLE IF NOT EXISTS posters (
@@ -97,7 +97,30 @@ BEGIN
   ) THEN
     ALTER TABLE menu_items
       ADD CONSTRAINT menu_items_portion_unit_check
-      CHECK (portion_unit IN ('g', 'ml'));
+      CHECK (
+        portion_unit IS NULL
+        OR portion_unit IN ('g', 'ml')
+      );
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1
+    FROM pg_constraint
+    WHERE conname = 'menu_items_portion_pair_check'
+  ) THEN
+    ALTER TABLE menu_items
+      ADD CONSTRAINT menu_items_portion_pair_check
+      CHECK (
+        (portion_value IS NULL AND portion_unit IS NULL)
+        OR (
+          portion_value IS NOT NULL
+          AND portion_value <> ''
+          AND portion_unit IS NOT NULL
+        )
+      );
   END IF;
 END $$;
 

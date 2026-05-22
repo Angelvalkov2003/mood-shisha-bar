@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { imgUrl } from "@/lib/utils";
+import { cn, imageSrc } from "@/lib/utils";
 import type { Shisha } from "@/types/db";
 
 function flavorLists(shisha: Shisha) {
@@ -31,20 +31,32 @@ export function ShishaFlavorsSection({
       <ul className="flex flex-col gap-4">
         {shishas.map((shisha) => {
           const { available, unavailable } = flavorLists(shisha);
+          const src = imageSrc(shisha.image_url);
           return (
             <li key={shisha.id}>
-              <article className="grid grid-cols-[5.5rem_minmax(0,1fr)] items-start gap-4 overflow-hidden rounded-2xl border border-brand/25 bg-surface-card/80 p-4 shadow-lg backdrop-blur-md sm:grid-cols-[6.5rem_minmax(0,1fr)] sm:gap-5">
-                <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-white/5">
-                  <Image
-                    src={imgUrl(shisha.image_url, shisha.id)}
-                    alt={shisha.brand}
-                    fill
-                    className="object-cover"
-                    sizes="104px"
-                  />
-                </div>
+              <article
+                className={cn(
+                  "grid items-start gap-4 overflow-hidden rounded-2xl border border-brand/25 bg-surface-card/80 p-4 shadow-lg backdrop-blur-md sm:gap-5",
+                  src
+                    ? "grid-cols-[5.5rem_minmax(0,1fr)] sm:grid-cols-[6.5rem_minmax(0,1fr)]"
+                    : "grid-cols-1",
+                )}
+              >
+                {src ? (
+                  <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-white/5">
+                    <Image
+                      src={src}
+                      alt={shisha.brand}
+                      fill
+                      className="object-cover"
+                      sizes="104px"
+                    />
+                  </div>
+                ) : null}
                 <div className="min-w-0 pt-0.5">
-                  <h3 className="text-lg font-semibold text-brand-light">{shisha.brand}</h3>
+                  <h3 className="text-lg font-semibold text-brand-light">
+                    {shisha.brand}
+                  </h3>
                   {(available.length > 0 || unavailable.length > 0) && (
                     <p className="mt-2 flex flex-wrap gap-x-2 gap-y-1.5 text-sm leading-relaxed">
                       {available.map((flavor) => (

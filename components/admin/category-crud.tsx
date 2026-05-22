@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Pencil, Plus, Trash2 } from "lucide-react";
-import { deleteCategory } from "@/app/admin/actions";
+import { deleteCategory, setCategorySortOrder } from "@/app/admin/actions";
+import { InlineSortInput } from "@/components/admin/inline-sort-input";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -18,11 +20,32 @@ import { imgUrl } from "@/lib/utils";
 import type { Category } from "@/types/db";
 
 export function CategoryCrud({ rows }: { rows: Category[] }) {
+  const router = useRouter();
   const [delId, setDelId] = useState<string | null>(null);
+  const [items, setItems] = useState(rows);
+
+  useEffect(() => {
+    setItems(rows);
+  }, [rows]);
 
   async function del(id: string) {
     await deleteCategory(id);
     setDelId(null);
+    router.refresh();
+  }
+
+  async function updateSort(row: Category, sort_order: number) {
+    setItems((prev) =>
+      prev.map((r) => (r.id === row.id ? { ...r, sort_order } : r)),
+    );
+    try {
+      await setCategorySortOrder(row.id, sort_order);
+      router.refresh();
+    } catch {
+      setItems((prev) =>
+        prev.map((r) => (r.id === row.id ? { ...r, sort_order: row.sort_order } : r)),
+      );
+    }
   }
 
   return (
@@ -49,7 +72,7 @@ export function CategoryCrud({ rows }: { rows: Category[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {rows.map((r) => (
+          {items.map((r) => (
             <TableRow key={r.id}>
               <TableCell>
                 <div className="relative h-10 w-10 overflow-hidden rounded">
@@ -65,7 +88,12 @@ export function CategoryCrud({ rows }: { rows: Category[] }) {
               <TableCell>{r.name_bg}</TableCell>
               <TableCell className="font-mono text-xs text-zinc-600">{r.slug}</TableCell>
               <TableCell>{r.name_en}</TableCell>
-              <TableCell>{r.sort_order}</TableCell>
+              <TableCell>
+                <InlineSortInput
+                  value={r.sort_order}
+                  onSave={(sort_order) => updateSort(r, sort_order)}
+                />
+              </TableCell>
               <TableCell className="text-right">
                 <div className="relative inline-flex items-center gap-1">
                   <Button variant="ghost" size="icon" asChild>
