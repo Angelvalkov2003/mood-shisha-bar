@@ -26,6 +26,11 @@ body {
   @apply bg-amber-600 text-white;
 }
 
+/* Filter / outline buttons: readable dark text on light admin UI */
+.admin-theme button.border {
+  @apply text-zinc-900;
+}
+
 .admin-theme .bg-brand-light {
   @apply bg-amber-100 text-amber-900;
 }

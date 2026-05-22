@@ -3,24 +3,22 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Filter, Pencil, Plus, Trash2 } from "lucide-react";
 import {
   deleteMenuItem,
   setMenuItemAvailability,
   setMenuItemSortNumber,
 } from "@/app/admin/actions";
+import {
+  AdminListSearch,
+  useAdminSearchQuery,
+} from "@/components/admin/admin-list-search";
 import { InlineSortInput } from "@/components/admin/inline-sort-input";
+import { matchesAdminSearch } from "@/lib/admin-search";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -40,7 +38,9 @@ export function MenuItemCrud({
   categories: Category[];
 }) {
   const router = useRouter();
-  const [filter, setFilter] = useState<string>("all");
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const { query: searchQuery } = useAdminSearchQuery();
   const [delId, setDelId] = useState<string | null>(null);
   const [items, setItems] = useState(rows);
   const [toggleErr, setToggleErr] = useState("");
@@ -49,12 +49,52 @@ export function MenuItemCrud({
     setItems(rows);
   }, [rows]);
 
-  const filtered = useMemo(
+  const filter = useMemo(() => {
+    const id = searchParams.get("category");
+    if (!id || id === "all") return "all";
+    return categories.some((c) => c.id === id) ? id : "all";
+  }, [searchParams, categories]);
+
+  const countByCategory = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const item of items) {
+      counts.set(item.category_id, (counts.get(item.category_id) ?? 0) + 1);
+    }
+    return counts;
+  }, [items]);
+
+  const categoryFiltered = useMemo(
     () => (filter === "all" ? items : items.filter((r) => r.category_id === filter)),
     [items, filter],
   );
 
+  const displayed = useMemo(
+    () =>
+      categoryFiltered.filter((r) =>
+        matchesAdminSearch(searchQuery, r.name_bg, r.name_en),
+      ),
+    [categoryFiltered, searchQuery],
+  );
+
+  function setCategoryFilter(categoryId: string) {
+    const params = new URLSearchParams(searchParams.toString());
+    if (categoryId === "all") params.delete("category");
+    else params.set("category", categoryId);
+    const q = params.toString();
+    router.replace(q ? `${pathname}?${q}` : pathname, { scroll: false });
+  }
+
   const catName = (id: string) => categories.find((c) => c.id === id)?.name_bg ?? "—";
+  const activeCategory =
+    filter === "all" ? null : categories.find((c) => c.id === filter);
+
+  const categoryFilterClass = (active: boolean) =>
+    cn(
+      "border text-zinc-900 shadow-none",
+      active
+        ? "border-amber-600 bg-amber-100 font-medium hover:bg-amber-200"
+        : "border-zinc-300 bg-white hover:bg-zinc-50",
+    );
 
   async function del(id: string) {
     await deleteMenuItem(id);
@@ -98,27 +138,55 @@ export function MenuItemCrud({
     <div>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-semibold">Menu items</h1>
-        <div className="flex flex-wrap items-center gap-3">
-          <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-44">
-              <SelectValue placeholder="Category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All categories</SelectItem>
-              {categories.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.name_en}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Button asChild>
-            <Link href="/admin/menu-items/new">
-              <Plus className="mr-2 h-4 w-4" />
-              Add
-            </Link>
+        <Button asChild>
+          <Link href="/admin/menu-items/new">
+            <Plus className="mr-2 h-4 w-4" />
+            Add
+          </Link>
+        </Button>
+      </div>
+
+      <AdminListSearch placeholder="Search by name (BG or EN)…" />
+
+      <div className="mb-4 rounded-lg border border-zinc-200 bg-white p-3">
+        <p className="mb-2 flex items-center gap-2 text-sm font-medium text-zinc-700">
+          <Filter className="h-4 w-4" aria-hidden />
+          Filter by category
+        </p>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className={categoryFilterClass(filter === "all")}
+            onClick={() => setCategoryFilter("all")}
+          >
+            All ({items.length})
           </Button>
+          {categories.map((c) => {
+            const count = countByCategory.get(c.id) ?? 0;
+            return (
+              <Button
+                key={c.id}
+                type="button"
+                size="sm"
+                variant="outline"
+                className={categoryFilterClass(filter === c.id)}
+                onClick={() => setCategoryFilter(c.id)}
+              >
+                {c.name_bg}
+                {c.name_en !== c.name_bg ? ` / ${c.name_en}` : ""} ({count})
+              </Button>
+            );
+          })}
         </div>
+        {activeCategory || searchQuery.trim() ? (
+          <p className="mt-2 text-xs text-zinc-500">
+            Showing {displayed.length} item{displayed.length === 1 ? "" : "s"}
+            {activeCategory ? ` in ${activeCategory.name_bg}` : ""}
+            {searchQuery.trim() ? ` matching “${searchQuery.trim()}”` : ""}
+          </p>
+        ) : null}
       </div>
 
       {toggleErr ? <p className="mb-3 text-sm text-red-600">{toggleErr}</p> : null}
@@ -126,30 +194,40 @@ export function MenuItemCrud({
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Available</TableHead>
-            <TableHead>Image</TableHead>
+            <TableHead className="w-10">Available</TableHead>
+            <TableHead className="hidden md:table-cell">Image</TableHead>
             <TableHead>Name (BG)</TableHead>
-            <TableHead>Portion</TableHead>
+            <TableHead className="hidden md:table-cell">Portion</TableHead>
             <TableHead>Category</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Sort Number</TableHead>
-            <TableHead />
+            <TableHead className="hidden md:table-cell">Price</TableHead>
+            <TableHead className="hidden md:table-cell">Sort Number</TableHead>
+            <TableHead className="w-[4.5rem] text-right md:w-auto" />
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filtered.map((r) => (
+          {displayed.length === 0 ? (
+            <TableRow>
+              <TableCell
+                colSpan={8}
+                className="py-8 text-center text-zinc-500 md:col-span-8"
+              >
+                No items match your search.
+              </TableCell>
+            </TableRow>
+          ) : null}
+          {displayed.map((r) => (
             <TableRow
               key={r.id}
               className={cn(!r.is_available && "bg-zinc-50/80 opacity-75")}
             >
-              <TableCell>
+              <TableCell className="w-10">
                 <Checkbox
                   checked={r.is_available}
                   onCheckedChange={() => toggleAvailable(r)}
                   aria-label={`Available: ${r.name_bg}`}
                 />
               </TableCell>
-              <TableCell>
+              <TableCell className="hidden md:table-cell">
                 {imageSrc(r.image_url) ? (
                   <div className="relative h-10 w-10 overflow-hidden rounded">
                     <Image
@@ -164,8 +242,11 @@ export function MenuItemCrud({
                   <span className="text-xs text-zinc-400">—</span>
                 )}
               </TableCell>
-              <TableCell>
-                <div className="flex flex-wrap items-center gap-2">
+              <TableCell className="max-w-[9rem] md:max-w-none">
+                <span className="line-clamp-2 text-sm font-medium md:hidden">
+                  {r.name_bg}
+                </span>
+                <div className="hidden flex-wrap items-center gap-2 md:flex">
                   {r.name_bg}
                   {r.is_featured ? <Badge>Featured</Badge> : null}
                   {!r.is_available ? (
@@ -175,14 +256,18 @@ export function MenuItemCrud({
                   ) : null}
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="hidden md:table-cell">
                 {r.portion_value && r.portion_unit
                   ? `${r.portion_value} ${r.portion_unit}`
                   : "—"}
               </TableCell>
-              <TableCell>{catName(r.category_id)}</TableCell>
-              <TableCell>{Number(r.price).toFixed(2)}</TableCell>
-              <TableCell>
+              <TableCell className="max-w-[5.5rem] text-sm md:max-w-none">
+                <span className="line-clamp-2">{catName(r.category_id)}</span>
+              </TableCell>
+              <TableCell className="hidden md:table-cell">
+                {Number(r.price).toFixed(2)}
+              </TableCell>
+              <TableCell className="hidden md:table-cell">
                 <InlineSortInput
                   value={r.sort_number}
                   onSave={(sort_number) => updateSort(r, sort_number)}

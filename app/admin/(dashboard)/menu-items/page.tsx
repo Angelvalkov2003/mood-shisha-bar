@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { MenuItemCrud } from "@/components/admin/menu-item-crud";
 import { supabaseAdmin } from "@/lib/supabase";
 import type { Category, MenuItem } from "@/types/db";
@@ -10,9 +11,15 @@ export default async function MenuItemsPage() {
   ]);
 
   return (
-    <MenuItemCrud
-      rows={(items.data ?? []) as MenuItem[]}
-      categories={(cats.data ?? []) as Category[]}
-    />
+    <Suspense
+      fallback={
+        <div className="text-sm text-zinc-500">Loading menu items…</div>
+      }
+    >
+      <MenuItemCrud
+        rows={(items.data ?? []) as MenuItem[]}
+        categories={(cats.data ?? []) as Category[]}
+      />
+    </Suspense>
   );
 }

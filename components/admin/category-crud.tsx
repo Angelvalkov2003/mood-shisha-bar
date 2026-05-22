@@ -1,12 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { deleteCategory, setCategorySortOrder } from "@/app/admin/actions";
+import {
+  AdminListSearch,
+  useAdminSearchQuery,
+} from "@/components/admin/admin-list-search";
 import { InlineSortInput } from "@/components/admin/inline-sort-input";
+import { matchesAdminSearch } from "@/lib/admin-search";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -21,8 +26,17 @@ import type { Category } from "@/types/db";
 
 export function CategoryCrud({ rows }: { rows: Category[] }) {
   const router = useRouter();
+  const { query: searchQuery } = useAdminSearchQuery();
   const [delId, setDelId] = useState<string | null>(null);
   const [items, setItems] = useState(rows);
+
+  const displayed = useMemo(
+    () =>
+      items.filter((r) =>
+        matchesAdminSearch(searchQuery, r.name_bg, r.name_en, r.slug),
+      ),
+    [items, searchQuery],
+  );
 
   useEffect(() => {
     setItems(rows);
@@ -60,6 +74,8 @@ export function CategoryCrud({ rows }: { rows: Category[] }) {
         </Button>
       </div>
 
+      <AdminListSearch placeholder="Search by name or slug…" />
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -72,7 +88,14 @@ export function CategoryCrud({ rows }: { rows: Category[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {items.map((r) => (
+          {displayed.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="py-8 text-center text-zinc-500">
+                No categories match your search.
+              </TableCell>
+            </TableRow>
+          ) : null}
+          {displayed.map((r) => (
             <TableRow key={r.id}>
               <TableCell>
                 <div className="relative h-10 w-10 overflow-hidden rounded">

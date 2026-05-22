@@ -1,12 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { deleteShisha, setShishaSortOrder } from "@/app/admin/actions";
+import {
+  AdminListSearch,
+  useAdminSearchQuery,
+} from "@/components/admin/admin-list-search";
 import { InlineSortInput } from "@/components/admin/inline-sort-input";
+import { matchesAdminSearch } from "@/lib/admin-search";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -21,8 +26,14 @@ import type { Shisha } from "@/types/db";
 
 export function ShishaCrud({ rows }: { rows: Shisha[] }) {
   const router = useRouter();
+  const { query: searchQuery } = useAdminSearchQuery();
   const [delId, setDelId] = useState<string | null>(null);
   const [items, setItems] = useState(rows);
+
+  const displayed = useMemo(
+    () => items.filter((r) => matchesAdminSearch(searchQuery, r.brand)),
+    [items, searchQuery],
+  );
 
   useEffect(() => {
     setItems(rows);
@@ -60,6 +71,8 @@ export function ShishaCrud({ rows }: { rows: Shisha[] }) {
         </Button>
       </div>
 
+      <AdminListSearch placeholder="Search by brand…" />
+
       <Table>
         <TableHeader>
           <TableRow>
@@ -72,7 +85,14 @@ export function ShishaCrud({ rows }: { rows: Shisha[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {items.map((r) => (
+          {displayed.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="py-8 text-center text-zinc-500">
+                No shishas match your search.
+              </TableCell>
+            </TableRow>
+          ) : null}
+          {displayed.map((r) => (
             <TableRow key={r.id}>
               <TableCell>
                 <div className="relative h-10 w-16 overflow-hidden rounded">
