@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Filter, Pencil, Plus, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import {
   deleteMenuItem,
   setMenuItemAvailability,
@@ -14,6 +14,7 @@ import {
   AdminListSearch,
   useAdminSearchQuery,
 } from "@/components/admin/admin-list-search";
+import { AdminCategorySelect } from "@/components/admin/category-select";
 import { InlineSortInput } from "@/components/admin/inline-sort-input";
 import { matchesAdminSearch } from "@/lib/admin-search";
 import { Badge } from "@/components/ui/badge";
@@ -88,14 +89,6 @@ export function MenuItemCrud({
   const activeCategory =
     filter === "all" ? null : categories.find((c) => c.id === filter);
 
-  const categoryFilterClass = (active: boolean) =>
-    cn(
-      "border text-zinc-900 shadow-none",
-      active
-        ? "border-amber-600 bg-amber-100 font-medium hover:bg-amber-200"
-        : "border-zinc-300 bg-white hover:bg-zinc-50",
-    );
-
   async function del(id: string) {
     await deleteMenuItem(id);
     setDelId(null);
@@ -149,37 +142,16 @@ export function MenuItemCrud({
       <AdminListSearch placeholder="Search by name (BG or EN)…" />
 
       <div className="mb-4 rounded-lg border border-zinc-200 bg-white p-3">
-        <p className="mb-2 flex items-center gap-2 text-sm font-medium text-zinc-700">
-          <Filter className="h-4 w-4" aria-hidden />
-          Filter by category
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            className={categoryFilterClass(filter === "all")}
-            onClick={() => setCategoryFilter("all")}
-          >
-            All ({items.length})
-          </Button>
-          {categories.map((c) => {
-            const count = countByCategory.get(c.id) ?? 0;
-            return (
-              <Button
-                key={c.id}
-                type="button"
-                size="sm"
-                variant="outline"
-                className={categoryFilterClass(filter === c.id)}
-                onClick={() => setCategoryFilter(c.id)}
-              >
-                {c.name_bg}
-                {c.name_en !== c.name_bg ? ` / ${c.name_en}` : ""} ({count})
-              </Button>
-            );
-          })}
-        </div>
+        <AdminCategorySelect
+          label="Filter by category"
+          id="menu-items-category-filter"
+          value={filter}
+          onValueChange={setCategoryFilter}
+          categories={categories}
+          includeAll
+          allCount={items.length}
+          getItemCount={(id) => countByCategory.get(id) ?? 0}
+        />
         {activeCategory || searchQuery.trim() ? (
           <p className="mt-2 text-xs text-zinc-500">
             Showing {displayed.length} item{displayed.length === 1 ? "" : "s"}

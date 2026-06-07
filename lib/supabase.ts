@@ -8,7 +8,13 @@ const anon =
 export const supabase = createClient(url, anon);
 
 export function supabaseAdmin() {
-  return createClient(url, process.env.SUPABASE_SERVICE_ROLE_KEY!, {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  if (!url || !serviceKey) {
+    throw new Error(
+      "Server misconfigured: missing Supabase URL or SUPABASE_SERVICE_ROLE_KEY.",
+    );
+  }
+  return createClient(url, serviceKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 }

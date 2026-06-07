@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import { saveMenuItem } from "@/app/admin/actions";
@@ -10,13 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { AdminCategorySelect } from "@/components/admin/category-select";
 import { Textarea } from "@/components/ui/textarea";
 import type { Category, MenuItem } from "@/types/db";
 
@@ -67,9 +61,24 @@ export function MenuItemForm({
     image_url: initial?.image_url ?? null,
   });
 
+  useEffect(() => {
+    if (initial?.category_id || categories.length === 0) return;
+    setForm((prev) =>
+      prev.category_id ? prev : { ...prev, category_id: categories[0]!.id },
+    );
+  }, [categories, initial?.category_id]);
+
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr("");
+    if (!form.category_id) {
+      setErr("Please select a category.");
+      return;
+    }
+    if (categories.length === 0) {
+      setErr("Create a category first, then add menu items.");
+      return;
+    }
     setBusy(true);
     try {
       const portionValue = form.portion_value.trim();
@@ -82,8 +91,8 @@ export function MenuItemForm({
       });
       router.push("/admin/menu-items");
       router.refresh();
-    } catch {
-      setErr("Save failed");
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : "Save failed");
       setBusy(false);
     }
   }
@@ -107,24 +116,23 @@ export function MenuItemForm({
           onChange={(url) => setForm({ ...form, image_url: url })}
           seed={form.id ?? "new-item"}
         />
-        <div>
-          <Label>Category</Label>
-          <Select
+        {categories.length === 0 ? (
+          <p className="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+            No categories yet.{" "}
+            <Link href="/admin/categories/new" className="font-medium underline">
+              Add a category
+            </Link>{" "}
+            before creating menu items.
+          </p>
+        ) : (
+          <AdminCategorySelect
+            label="Category"
+            id="menu-item-category"
             value={form.category_id}
             onValueChange={(v) => setForm({ ...form, category_id: v })}
-          >
-            <SelectTrigger className="mt-1">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {categories.map((c) => (
-                <SelectItem key={c.id} value={c.id}>
-                  {c.name_en} ({c.name_bg})
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+            categories={categories}
+          />
+        )}
         <div className="grid gap-4 sm:grid-cols-2">
           <div>
             <Label>Name (BG)</Label>
@@ -254,7 +262,11 @@ export function MenuItemForm({
           <p className="text-sm text-amber-700">Not available — hidden from public menu.</p>
         ) : null}
         {err ? <p className="text-sm text-red-600">{err}</p> : null}
-        <Button type="submit" className="w-full" disabled={busy}>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={busy || categories.length === 0}
+        >
           {busy ? "Saving..." : "Save"}
         </Button>
       </form>

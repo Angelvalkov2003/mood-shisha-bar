@@ -13,7 +13,24 @@ function revalidate() {
   revalidatePath("/admin/menu-items");
   revalidatePath("/admin/posters");
   revalidatePath("/admin/shishas");
+  revalidatePath("/menu");
   revalidatePath("/menu/nargile");
+}
+
+function failDb(error: { message: string } | null) {
+  if (error) throw new Error(error.message);
+}
+
+function normalizePortion(
+  portion_value: string | null | undefined,
+  portion_unit: "g" | "ml" | null | undefined,
+) {
+  const value = portion_value?.trim() || null;
+  if (!value) return { portion_value: null, portion_unit: null };
+  return {
+    portion_value: value,
+    portion_unit: portion_unit === "ml" ? "ml" : "g",
+  };
 }
 
 export async function saveCategory(data: {
@@ -36,10 +53,10 @@ export async function saveCategory(data: {
   };
   if (data.id) {
     const { error } = await db.from("categories").update(row).eq("id", data.id);
-    if (error) throw error;
+    failDb(error);
   } else {
     const { error } = await db.from("categories").insert(row);
-    if (error) throw error;
+    failDb(error);
   }
   revalidate();
 }
@@ -67,29 +84,42 @@ export async function saveMenuItem(data: {
   image_url: string | null;
 }) {
   await assertAdmin();
+
+  if (!data.category_id?.trim()) {
+    throw new Error("Please select a category.");
+  }
+  if (!data.name_bg.trim() || !data.name_en.trim()) {
+    throw new Error("Name (BG) and Name (EN) are required.");
+  }
+  if (!Number.isFinite(data.price) || data.price < 0) {
+    throw new Error("Please enter a valid price.");
+  }
+
   const db = supabaseAdmin();
-  const portion_value = data.portion_value?.trim() || null;
-  const portion_unit = portion_value ? data.portion_unit : null;
+  const { portion_value, portion_unit } = normalizePortion(
+    data.portion_value,
+    data.portion_unit,
+  );
   const row = {
     category_id: data.category_id,
-    name_bg: data.name_bg,
-    name_en: data.name_en,
-    description_bg: data.description_bg,
-    description_en: data.description_en,
+    name_bg: data.name_bg.trim(),
+    name_en: data.name_en.trim(),
+    description_bg: data.description_bg?.trim() || null,
+    description_en: data.description_en?.trim() || null,
     portion_value,
     portion_unit,
     price: data.price,
-    sort_number: data.sort_number,
+    sort_number: Number.isFinite(data.sort_number) ? data.sort_number : 0,
     is_featured: data.is_featured,
     is_available: data.is_available,
-    image_url: data.image_url,
+    image_url: data.image_url?.trim() || null,
   };
   if (data.id) {
     const { error } = await db.from("menu_items").update(row).eq("id", data.id);
-    if (error) throw error;
+    failDb(error);
   } else {
     const { error } = await db.from("menu_items").insert(row);
-    if (error) throw error;
+    failDb(error);
   }
   revalidate();
 }
