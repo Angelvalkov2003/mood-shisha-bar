@@ -1,4 +1,4 @@
-import { SOCIAL_FACEBOOK, SOCIAL_INSTAGRAM } from "@/lib/constants";
+import { SOCIAL_FACEBOOK, SOCIAL_INSTAGRAM, SOCIAL_TIKTOK } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
 function IconFacebook({ className }: { className?: string }) {
@@ -27,12 +27,22 @@ function IconInstagram({ className }: { className?: string }) {
   );
 }
 
+function IconTikTok({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden className={className}>
+      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.27 6.27 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.78 1.52V6.76a4.85 4.85 0 01-1.01-.07z" />
+    </svg>
+  );
+}
+
 export function SocialLinks({
   className,
   iconClassName = "h-6 w-6 text-brand transition hover:opacity-80",
+  showTikTok = true,
 }: {
   className?: string;
   iconClassName?: string;
+  showTikTok?: boolean;
 }) {
   return (
     <div className={cn("flex items-center justify-center gap-5", className)}>
@@ -54,6 +64,17 @@ export function SocialLinks({
       >
         <IconInstagram className={iconClassName} />
       </a>
+      {showTikTok ? (
+        <a
+          href={SOCIAL_TIKTOK}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="TikTok"
+          className="rounded-full p-1 outline-none focus-visible:ring-2 focus-visible:ring-brand"
+        >
+          <IconTikTok className={iconClassName} />
+        </a>
+      ) : null}
     </div>
   );
 }

@@ -8,6 +8,22 @@
     "name": "Mood Shisha Bar",
     "tagline": "Premium shisha and a great atmosphere"
   },
+  "home": {
+    "tagline": "A hookah bar that sets the mood",
+    "subtitle": "Premium shisha, crafted cocktails and an atmosphere made for your night out in Varna.",
+    "galleryEyebrow": "Atmosphere",
+    "galleryTitle": "Inside Mood",
+    "visitEyebrow": "Visit us",
+    "visitTitle": "Find your mood",
+    "hoursTitle": "Opening hours",
+    "hoursEveryDay": "Every day",
+    "addressTitle": "Address",
+    "openMaps": "Open in Maps",
+    "phoneTitle": "Phone & reservations",
+    "bookNow": "Book now",
+    "call": "Call",
+    "followUs": "Follow us"
+  },
   "sections": {
     "featured": "Featured",
     "menu": "Menu",

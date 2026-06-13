@@ -25,8 +25,7 @@ export function BrandLogo({
         width={160}
         height={160}
         priority={priority}
-        className={cn("h-10 w-10 shrink-0 object-contain", imageClassName)}
-        style={{ width: "auto", height: "auto" }}
+        className={cn("h-10 w-auto shrink-0 object-contain", imageClassName)}
       />
       {showName ? (
         <span className={cn("font-semibold leading-tight", nameClassName)}>

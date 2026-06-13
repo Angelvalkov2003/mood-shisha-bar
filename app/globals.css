@@ -174,3 +174,50 @@ html.menu-expand-active .menu-bubbles-root {
 html.menu-expand-active .menu-page {
   visibility: hidden;
 }
+
+/* Homepage hero entrance */
+@keyframes home-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.home-fade-up {
+  animation: home-fade-up 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.home-fade-up-delay-1 {
+  animation-delay: 0.12s;
+}
+
+.home-fade-up-delay-2 {
+  animation-delay: 0.24s;
+}
+
+.home-fade-up-delay-3 {
+  animation-delay: 0.36s;
+}
+
+.hero-tagline {
+  text-shadow:
+    0 0 48px rgba(189, 156, 77, 0.28),
+    0 2px 24px rgba(0, 0, 0, 0.45);
+}
+
+.hero-subtitle {
+  text-shadow: 0 1px 20px rgba(0, 0, 0, 0.5);
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}

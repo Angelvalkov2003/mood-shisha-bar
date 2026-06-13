@@ -1,14 +1,10 @@
-import { getTranslations, setRequestLocale } from "next-intl/server";
-import { Navbar } from "@/components/site/navbar";
-import { Hero } from "@/components/site/hero";
-import { FeaturedSection } from "@/components/site/featured-section";
-import { FullMenu } from "@/components/site/full-menu";
-import { ContactForm } from "@/components/site/contact-form";
-import { SocialLinks } from "@/components/site/social-links";
-import { PostersSection } from "@/components/site/posters-section";
-import { getMenuData } from "@/lib/menu-data";
-import { supabase } from "@/lib/supabase";
-import type { Poster } from "@/types/db";
+import { setRequestLocale } from "next-intl/server";
+import { HomeFooter } from "@/components/site/home-footer";
+import { HomeGallery } from "@/components/site/home-gallery";
+import { HomeHero } from "@/components/site/home-hero";
+import { HomeInfo } from "@/components/site/home-info";
+import { HomeNavbar } from "@/components/site/home-navbar";
+import { HomeShell } from "@/components/site/home-shell";
 
 export default async function HomePage({
   params,
@@ -17,36 +13,21 @@ export default async function HomePage({
 }) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const { featured, byCat } = await getMenuData();
-  const { data: posterData } = await supabase
-    .from("posters")
-    .select("*")
-    .order("sort_order", { ascending: false });
-  const posters = (posterData ?? []) as Poster[];
-  const t = await getTranslations("sections");
-  const tf = await getTranslations("footer");
 
   return (
-    <>
-      <Navbar />
-      <main>
-        <Hero />
-        <PostersSection locale={locale} posters={posters} />
-        <FeaturedSection items={featured} locale={locale} />
-        <FullMenu groups={byCat} locale={locale} />
-        <section id="contact" className="scroll-mt-20 border-t border-brand/15 py-16">
-          <div className="mx-auto max-w-5xl px-4 text-center">
-            <h2 className="mb-8 text-2xl font-semibold text-brand">{t("contact")}</h2>
-            <ContactForm />
-          </div>
-        </section>
+    <HomeShell>
+      <HomeNavbar />
+      <main className="overflow-x-clip">
+        {/* Desktop: black band at top, then hero photo (navbar stays transparent over it) */}
+        <div
+          className="hidden h-[9.5rem] shrink-0 bg-ink sm:block"
+          aria-hidden
+        />
+        <HomeHero />
+        <HomeInfo />
+        <HomeGallery />
       </main>
-      <footer className="border-t border-brand/25 py-8 text-center">
-        <SocialLinks className="mb-4" />
-        <p className="text-sm text-zinc-400">
-          {tf("copy", { year: new Date().getFullYear() })}
-        </p>
-      </footer>
-    </>
+      <HomeFooter />
+    </HomeShell>
   );
 }

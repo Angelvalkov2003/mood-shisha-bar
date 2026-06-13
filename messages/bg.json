@@ -8,6 +8,22 @@
     "name": "Mood Shisha Bar",
     "tagline": "Премиум наргиле и отлична атмосфера"
   },
+  "home": {
+    "tagline": "A hookah bar that sets the mood",
+    "subtitle": "Премиум наргиле, коктейли и атмосфера за нощта ти във Варна.",
+    "galleryEyebrow": "Атмосфера",
+    "galleryTitle": "В Mood",
+    "visitEyebrow": "Посетете ни",
+    "visitTitle": "Намери своето настроение",
+    "hoursTitle": "Работно време",
+    "hoursEveryDay": "Всеки ден",
+    "addressTitle": "Адрес",
+    "openMaps": "Отвори в Maps",
+    "phoneTitle": "Телефон и резервации",
+    "bookNow": "Резервирай",
+    "call": "Обади се",
+    "followUs": "Последвай ни"
+  },
   "sections": {
     "featured": "Препоръчано",
     "menu": "Меню",
